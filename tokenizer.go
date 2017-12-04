@@ -5,15 +5,23 @@ import (
 	"regexp"
 )
 
-// Possible error
 var (
+	// ErrUnknowToken Unknow Token Error
 	ErrUnknowToken = errors.New("Encounter an unknow token")
+
+	// SpacePattern Pattern matching for space(s)
+	SpacePattern = `\s+|\t+`
+
+	// LineBreakPattern Pattern matching for line break
+	LineBreakPattern = `\n`
 )
 
 // Option Option config for Tokenizer struct
 type Option struct {
-	IgnoreSpaces    bool
-	IgnoreLineBreak bool
+	IgnoreSpaces             bool
+	IgnoreLineBreak          bool
+	UseBuiltInSpaceToken     bool
+	UseBuiltInLineBreakToken bool
 }
 
 // Tokenizer Tokenizer
@@ -30,8 +38,12 @@ func NewTokenizer(option Option) Tokenizer {
 	}
 
 	// Add default pattern matching
-	t.Add(Space, `\s+|\t+`)
-	t.Add(LineBreak, `\n`)
+	if option.UseBuiltInSpaceToken {
+		t.Add(Space, SpacePattern)
+	}
+	if option.UseBuiltInLineBreakToken {
+		t.Add(LineBreak, LineBreakPattern)
+	}
 	return t
 }
 
